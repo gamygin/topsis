@@ -4,6 +4,9 @@ import skcriteria as skc
 from skcriteria.preprocessing import invert_objectives, scalers
 from skcriteria.madm import similarity
 from skcriteria.pipeline import mkpipe
+import datetime
+
+alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 def get_file_path():
     # Asks the user to enter the filepath of the excel file.
@@ -39,6 +42,7 @@ if __name__ == "__main__":
     alternatives = []
     column = 2
     row = 4
+    rank_column = 0
     #getting all the values except matrix
     while True:
         criteriaValue = sheet.cell(row= 1, column= column).value
@@ -55,17 +59,37 @@ if __name__ == "__main__":
         elif objectiveValue == 'max':
             objectives.append(max)
         column += 1
-        if not sheet.cell(row= 1, column= column).value and not sheet.cell(row= 2, column= column).value and not sheet.cell(row= 3, column= column).value:
-            print(criteria, weights, objectives)
-            #getting compared object names (alternatives)
-            while True:
-                alternativeValue = sheet.cell(row= row, column= 1).value
-                alternatives.append(alternativeValue)
-                row += 1
-                if not sheet.cell(row= row, column= 1).value:
-                    print(alternatives)
-                    break
-            break
+
+        #this will be used if the program has already been used on the file
+        if sheet.cell(row= 1, column= column).value != None:
+            if "Rankings by" in sheet.cell(row= 1, column= column).value:
+                rank_column = column
+                while True:
+                    rank_column += 1                
+                    if not sheet.cell(row= 1, column= rank_column).value or not "Rankings by" in sheet.cell(row= 1, column= rank_column).value:
+                        #getting compared object names (alternatives)
+                        while True:
+                            alternativeValue = sheet.cell(row= row, column= 1).value
+                            alternatives.append(alternativeValue)
+                            row += 1
+                            if not sheet.cell(row= row, column= 1).value:
+                                print(alternatives)
+                                break 
+                        break
+                break
+        #this will be used if the program is beeing used on the file for the first time
+        else:
+            if not sheet.cell(row= 1, column= column).value and not sheet.cell(row= 2, column= column).value and not sheet.cell(row= 3, column= column).value:
+                print(criteria, weights, objectives)
+                #getting compared object names (alternatives)
+                while True:
+                    alternativeValue = sheet.cell(row= row, column= 1).value
+                    alternatives.append(alternativeValue)
+                    row += 1
+                    if not sheet.cell(row= row, column= 1).value:
+                        print(alternatives)
+                        break
+                break
 
     #getting matrix
     matrix = []
@@ -99,7 +123,21 @@ if __name__ == "__main__":
     rankings = list(rank.values)
     print(rankings,"\n")
 
+    #inserting ranks
     for i in range(len(rankings)):
-        sheet.cell(row= i+4, column=column).value = rankings[i]
-    sheet.cell(row= 1, column=column).value = 'Rankings'
+        sheet.cell(row= i+4, column=rank_column).value = rankings[i]
+
+    #inserting rank header with date & time
+    sheet.cell(row= 1, column=rank_column).value = f'Rankings by {datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")}'
+    if rank_column <= len(alphabet):
+        index = alphabet[rank_column]
+    else:
+        t = rank_column//len(alphabet) 
+        for i in range(t):
+            index = "Z"*t
+        index += alphabet[rank_column-len(alphabet*t)-1]
+
+    wb.worksheets[0].column_dimensions[index].width = 30
+
+    #saving file
     wb.save(file_name)
