@@ -5,16 +5,32 @@ from skcriteria.preprocessing import invert_objectives, scalers
 from skcriteria.madm import similarity
 from skcriteria.pipeline import mkpipe
 
-
-if __name__ == "__main__":
+def get_file_path():
     # Asks the user to enter the filepath of the excel file.
-    filePath = input('Please enter the path of the folder where the excel files are stored: ')
+    filePath = input('Please enter the path of the folder where the excel file is stored: ')
     # Goes inside that folder.
-    os.chdir(filePath)
+    try:
+        os.chdir(filePath)
+        get_file()
+    except:
+        print("Input a valid path. Do not input the path to the file itself but rather to its location.")
+        get_file_path()
+
+def get_file():
+    global file_name, wb
     #gets excel file
     file_name = input('Please enter the name of the file: ')
     #loads excel file
-    wb = openpyxl.load_workbook(file_name)
+    try:
+        wb = openpyxl.load_workbook(file_name)
+    except:
+        print('Input a valid file. Check for spelling mistakes and ".xlsx". You might also be in the wrong directory')
+        get_file()
+
+
+
+if __name__ == "__main__":
+    get_file_path()
     sheet = wb.active
     #getting ready to get info except matrix
     criteria = []
