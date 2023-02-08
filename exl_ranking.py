@@ -79,7 +79,7 @@ if __name__ == "__main__":
                 break
         #this will be used if the program is beeing used on the file for the first time
         else:
-            if not sheet.cell(row= 1, column= column).value and not sheet.cell(row= 2, column= column).value and not sheet.cell(row= 3, column= column).value:
+            if not sheet.cell(row= 1, column= column).value or not sheet.cell(row= 2, column= column).value or not sheet.cell(row= 3, column= column).value:
                 print(criteria, weights, objectives)
                 #getting compared object names (alternatives)
                 while True:
@@ -89,6 +89,7 @@ if __name__ == "__main__":
                     if not sheet.cell(row= row, column= 1).value:
                         print(alternatives)
                         break
+                rank_column = column
                 break
 
     #getting matrix
@@ -130,7 +131,7 @@ if __name__ == "__main__":
     #inserting rank header with date & time
     sheet.cell(row= 1, column=rank_column).value = f'Rankings by {datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")}'
     if rank_column <= len(alphabet):
-        index = alphabet[rank_column]
+        index = alphabet[rank_column-1]
     else:
         t = rank_column//len(alphabet) 
         for i in range(t):
