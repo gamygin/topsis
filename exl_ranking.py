@@ -16,7 +16,7 @@ def get_file_path():
         os.chdir(filePath)
         get_file()
     except:
-        print("Input a valid path. Do not input the path to the file itself but rather to its location.")
+        print("Input a valid path. Do not input the path to the file itself but rather to its location.","\n")
         get_file_path()
 
 def get_file():
@@ -27,7 +27,7 @@ def get_file():
     try:
         wb = openpyxl.load_workbook(file_name)
     except:
-        print('Input a valid file. Check for spelling mistakes and ".xlsx". You might also be in the wrong directory')
+        print('Input a valid file. Check for spelling mistakes and ".xlsx". You might also be in the wrong directory',"\n")
         get_file()
 
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
         try:
             weights.append(float(weightValue))
         except:
-            print('Incorrect weights')
+            print('Incorrect weights',"\n")
             break
         objectiveValue = sheet.cell(row= 3, column= column).value
         if objectiveValue == 'min':
@@ -73,7 +73,7 @@ if __name__ == "__main__":
                             alternatives.append(alternativeValue)
                             row += 1
                             if not sheet.cell(row= row, column= 1).value:
-                                print(alternatives)
+                                print(alternatives,"\n")
                                 break 
                         break
                 break
@@ -100,45 +100,51 @@ if __name__ == "__main__":
             try:
                 value = float(sheet.cell(row=r+4, column=c+2).value)
             except:
-                print('Incorrect values')
+                print('Incorrect values',"\n")
                 break
             values.append(value)
         matrix.append(values)
-    print(matrix)
+    print(matrix,"\n")
 
-    #evaluating values
-    dm = skc.mkdm(matrix, objectives, weights, alternatives, criteria)
-    print(dm,"\n")
+    try:
+        #evaluating values
+        dm = skc.mkdm(matrix, objectives, weights, alternatives, criteria)
+        print(dm,"\n")
 
-    pipe = mkpipe(
-    invert_objectives.NegateMinimize(),
-    scalers.VectorScaler(target="matrix"),  # this scaler transform the matrix
-    scalers.SumScaler(target="weights"),  # and this transform the weights
-    similarity.TOPSIS(),
-    )
-    print(pipe,"\n")
+        pipe = mkpipe(
+        invert_objectives.NegateMinimize(),
+        scalers.VectorScaler(target="matrix"),  # this scaler transform the matrix
+        scalers.SumScaler(target="weights"),  # and this transform the weights
+        similarity.TOPSIS(),
+        )
+        print(pipe,"\n")
 
-    rank = pipe.evaluate(dm)
-    print(rank,"\n")
+        rank = pipe.evaluate(dm)
+        print(rank,"\n")
 
-    rankings = list(rank.values)
-    print(rankings,"\n")
+        rankings = list(rank.values)
+        print(rankings,"\n")
 
-    #inserting ranks
-    for i in range(len(rankings)):
-        sheet.cell(row= i+4, column=rank_column).value = rankings[i]
+        #inserting ranks
+        for i in range(len(rankings)):
+            sheet.cell(row= i+4, column=rank_column).value = rankings[i]
 
-    #inserting rank header with date & time
-    sheet.cell(row= 1, column=rank_column).value = f'Rankings by {datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")}'
-    if rank_column <= len(alphabet):
-        index = alphabet[rank_column-1]
-    else:
-        t = rank_column//len(alphabet) 
-        for i in range(t):
-            index = "Z"*t
-        index += alphabet[rank_column-len(alphabet*t)-1]
+        #inserting rank header with date & time
+        sheet.cell(row= 1, column=rank_column).value = f'Rankings by {datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")}'
+        if rank_column <= len(alphabet):
+            index = alphabet[rank_column-1]
+        else:
+            t = rank_column//len(alphabet) 
+            for i in range(t):
+                index = "Z"*t
+            index += alphabet[rank_column-len(alphabet*t)-1]
 
-    wb.worksheets[0].column_dimensions[index].width = 30
+        wb.worksheets[0].column_dimensions[index].width = 30
 
-    #saving file
-    wb.save(file_name)
+        #saving file
+        wb.save(file_name)
+    except:
+        print("Processes stopped: Your file doesn't oblige by the structure given in README.md. Review for any possible holes or incorrect value types.")
+        #saving file
+        wb.save(file_name)
+    
