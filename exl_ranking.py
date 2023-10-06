@@ -19,6 +19,7 @@ if __name__ == "__main__":
     criteria = []
     weights = []
     objectives = []
+    objectives_str = []
     alternatives = []
     column = 2
     row = 4
@@ -41,35 +42,19 @@ if __name__ == "__main__":
         # objectives (min, max)
         objectiveValue = sheet.cell(row= 3, column= column).value
         if objectiveValue == 'min':
+            objectives_str.append("min")
             objectives.append(min)
         elif objectiveValue == 'max':
+            objectives_str.append("max")
             objectives.append(max)
 
         #checking next cell
         column += 1
         #this will be used if the program has already been used on the file
         current_cell = sheet.cell(row= 1, column= column).value
-        if current_cell != None:
-            # seeing if next sell is a ranking
-            if "Rankings by" in current_cell:
-                rank_column = column
-                while True:
-                    rank_column += 1                
-                    if not sheet.cell(row= 1, column= rank_column).value or not "Rankings by" in sheet.cell(row= 1, column= rank_column).value:
-                        #getting compared object names (alternatives)
-                        while True:
-                            alternativeValue = sheet.cell(row= row, column= 1).value
-                            alternatives.append(alternativeValue)
-                            row += 1
-                            if not sheet.cell(row= row, column= 1).value:
-                                print(alternatives,"\n")
-                                break 
-                        break
-                break
-        #this will be used if the program is beeing used on the file for the first time
-        else:
+        if current_cell == None:
             if not current_cell or not sheet.cell(row= 2, column= column).value or not sheet.cell(row= 3, column= column).value:
-                print(criteria, weights, objectives)
+                print(f"criteria: {criteria}, weights: {weights}, objectives: {objectives}")
                 #getting compared object names (alternatives)
                 while True:
                     alternativeValue = sheet.cell(row= row, column= 1).value
@@ -78,6 +63,7 @@ if __name__ == "__main__":
                     if not sheet.cell(row= row, column= 1).value:
                         print(f'alternatives (compared objects): {alternatives}')
                         break
+                    final_alternative = row
                 rank_column = column
                 break
 
@@ -104,22 +90,38 @@ if __name__ == "__main__":
         rankings = list(rank.values)
         print(f"rankings: {rankings} \n")
 
-        #inserting ranks
-        for i in range(len(rankings)):
-            sheet.cell(row= i+4, column=rank_column).value = rankings[i]
+        #putting results header
+        if not sheet.cell(row= final_alternative + 3, column= 1).value:
+            sheet.cell(row= final_alternative + 3, column= 1).value = "Results:"
+        last_row = final_alternative + 4
 
-        #inserting rank header with date & time
-        sheet.cell(row= 1, column=rank_column).value = f'Rankings by {datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")}'
+        #getting to the open space
+        while True:
+            if sheet.cell(row= last_row, column= 1).value:
+                last_row += 7
+            else:
+                break
+        #diplaying timestamp
+        sheet.cell(row= last_row, column= 1).value = str(datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+        wb.worksheets[0].column_dimensions["A"].width = 20
+        last_row += 1
+
+        #displaying data on time of analysis
+        display_snapshot(sheet, last_row, alternatives, criteria, weights, objectives_str, matrix)
+        
+        #displaying rankings
+        rank_column = len(criteria) + 2
+        display_rankings(sheet, rank_column, last_row, rankings)
 
         #getting column name in letters
         index = column_index_to_letters(rank_column)
 
         #adjusting the width of the column with the results
-        wb.worksheets[0].column_dimensions[index].width = 30
+        wb.worksheets[0].column_dimensions[index].width = 15
+        #saving file
+        wb.save(file_name)
     except Exception as error:
         print("Processes stopped: Your file doesn't oblige by the structure given in README.md. Review for any possible holes or incorrect value types.")
         print(f"Error: {error}")
 
-    #saving file
-    wb.save(file_name)
     

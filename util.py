@@ -44,6 +44,36 @@ def create_matrix(sheet, row, column):
     print(matrix,"\n")
     return matrix
 
+def display_snapshot(sheet, last_row, alternatives, criteria, weights, objectives, matrix):
+    #display the alternatives
+    for alternative in alternatives:
+            sheet.cell(row= last_row + 3 + alternatives.index(alternative), column= 1).value = alternative
+
+    #display the criteria
+    for criterion in criteria:
+        sheet.cell(row= last_row, column= 2 + criteria.index(criterion)).value = criterion
+
+    #display the weights
+    for weight in weights:
+        sheet.cell(row= last_row + 1, column= 2 + weights.index(weight)).value = weight
+
+    #display the objectives
+    for objective in objectives:
+        sheet.cell(row= last_row + 2, column= 2 + objectives.index(objective)).value = objective
+
+    #display matrix
+    for row in matrix:
+        for value in row:
+            sheet.cell(row= last_row + 3 + matrix.index(row), column= 2 + row.index(value)).value = value
+
+def display_rankings(sheet, rank_column, last_row, rankings):
+    #inserting rank header with date & time
+    sheet.cell(row= last_row, column=rank_column).value = f'Rankings:'
+    sheet.cell(row= last_row, column=rank_column).fill = openpyxl.styles.fills.PatternFill(patternType='solid', fgColor=openpyxl.styles.colors.Color(rgb='00FFFF00'))
+    #inserting ranks
+    for rank in rankings:
+        sheet.cell(row= last_row + 3 + rankings.index(rank), column=rank_column).value = rank
+
 def column_index_to_letters(rank_column):
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
