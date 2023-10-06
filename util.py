@@ -6,7 +6,19 @@ from skcriteria.madm import similarity
 from skcriteria.pipeline import mkpipe
 import datetime
 
-def get_file_path():
+def get_file_direct(filePath, file_name, error_label):
+    try:
+        os.chdir(filePath)
+        wb = openpyxl.load_workbook(file_name)
+        return wb
+    except Exception as error:
+        print("Input a valid path and file. Do not input the path to the file itself but rather to its location.","\n")
+        print(error)
+        error_label.config(text = "Input a valid path and file. Be sure that you did not forget .xlsx at the end of the file name.")
+        return "error"
+
+
+def get_file_path(filePath):
     # Asks the user to enter the filepath of the excel file.
     filePath = input('Please enter the path of the folder where the excel file is stored: ')
     # Goes inside that folder.
@@ -18,7 +30,7 @@ def get_file_path():
         print("Input a valid path. Do not input the path to the file itself but rather to its location.","\n")
         get_file_path()
 
-def get_file():
+def get_file(file_name):
     #gets excel file
     file_name = input('Please enter the name of the file: ')
     #loads excel file

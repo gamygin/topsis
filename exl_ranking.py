@@ -5,15 +5,51 @@ from skcriteria.preprocessing import invert_objectives, scalers
 from skcriteria.madm import similarity
 from skcriteria.pipeline import mkpipe
 import datetime
+from tkinter import *
 
 from util import *
 
 
+def get_window_data():
+    global wb, file_name
+    print(1)
+    file_path = path_entry.get()
+    file_name = file_entry.get()
+    result = get_file_direct(file_path, file_name, error_label)
+    if result == "error":
+        return 
+    else:
+        wb = result
+    window.destroy()
+
+
+window = Tk()
+window.geometry("650x250")
+window.title("Ranking")
+
+label_path = Label(window, text="Path to the folder where the file is located", font= ('Arial 15'))
+label_file = Label(window, text="The name of the file", font= ('Arial 15'))
+
+path_entry = Entry(window, width=40, font=('Arial 15'))
+file_entry = Entry(window, width=20, font=('Arial 15'))
+
+error_label = Label(window, text="", font= ('Arial 10'))
+
+submit = Button(window, text="Analyze", height=2, width=20, command= get_window_data)
+
+label_path.pack()
+path_entry.pack()
+
+label_file.pack()
+file_entry.pack()
+
+error_label.pack()
+
+submit.pack(side=BOTTOM, pady= 20)
+
+window.mainloop()
 
 if __name__ == "__main__":
-    file = get_file_path()
-    wb = file[0]
-    file_name = file[1]
     sheet = wb.active
     #getting ready to get info except matrix
     criteria = []
