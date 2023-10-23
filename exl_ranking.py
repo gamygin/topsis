@@ -13,9 +13,14 @@ from util import *
 def get_window_data():
     global wb, file_name
     print(1)
-    file_path = path_entry.get()
-    file_name = file_entry.get()
-    result = get_file_direct(file_path, file_name, error_label)
+    file_path = file_path_entry.get()
+    print(file_path)
+    folder_path = file_path[0:file_path.rfind("\\")]
+    print(folder_path)
+    file_name = file_path[file_path.rfind("\\") +1:]
+    print(file_name)
+    result = get_file_direct(folder_path, file_name, error_label)
+    print(result)
     if result == "error":
         return 
     else:
@@ -27,25 +32,24 @@ window = Tk()
 window.geometry("650x250")
 window.title("Ranking")
 
-label_path = Label(window, text="Path to the folder where the file is located", font= ('Arial 15'))
-label_file = Label(window, text="The name of the file", font= ('Arial 15'))
+label_file_path = Label(window, text="Path to the file", font= ('Arial 15'))
 
-path_entry = Entry(window, width=40, font=('Arial 15'))
-file_entry = Entry(window, width=20, font=('Arial 15'))
+file_path_entry = Entry(window, width=40, font=('Arial 15'))
 
 error_label = Label(window, text="", font= ('Arial 10'))
 
 submit = Button(window, text="Analyze", height=2, width=20, command= get_window_data)
 
-label_path.pack()
-path_entry.pack()
+signature = Label(window, text="Made by: Nikita Gamygin", font= ('Arial 10'))
 
-label_file.pack()
-file_entry.pack()
+label_file_path.pack()
+file_path_entry.pack()
 
 error_label.pack()
 
-submit.pack(side=BOTTOM, pady= 20)
+submit.pack(pady= 20)
+
+signature.pack(side=BOTTOM)
 
 window.mainloop()
 

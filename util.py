@@ -7,39 +7,16 @@ from skcriteria.pipeline import mkpipe
 import datetime
 
 def get_file_direct(filePath, file_name, error_label):
+    print(filePath)
     try:
         os.chdir(filePath)
         wb = openpyxl.load_workbook(file_name)
         return wb
     except Exception as error:
-        print("Input a valid path and file. Do not input the path to the file itself but rather to its location.","\n")
+        print('Please make sure that you have inputed a valid path. You can get the path by right-clicking the file and selecting "Copy Path".',"\n")
         print(error)
-        error_label.config(text = "Input a valid path and file. Be sure that you did not forget .xlsx at the end of the file name.")
+        error_label.config(text = 'Please make sure that you have inputed a valid path.\n You can get the path by right-clicking the file and selecting "Copy Path".')
         return "error"
-
-
-def get_file_path(filePath):
-    # Asks the user to enter the filepath of the excel file.
-    filePath = input('Please enter the path of the folder where the excel file is stored: ')
-    # Goes inside that folder.
-    try:
-        os.chdir(filePath)
-        file = get_file()
-        return file
-    except:
-        print("Input a valid path. Do not input the path to the file itself but rather to its location.","\n")
-        get_file_path()
-
-def get_file(file_name):
-    #gets excel file
-    file_name = input('Please enter the name of the file: ')
-    #loads excel file
-    try:
-        wb = openpyxl.load_workbook(file_name)
-        return wb, file_name
-    except:
-        print('Input a valid file. Check for spelling mistakes and ".xlsx". You might also be in the wrong directory',"\n")
-        get_file()
 
 def create_matrix(sheet, row, column):
     matrix = []
