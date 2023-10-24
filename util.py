@@ -5,17 +5,21 @@ from skcriteria.preprocessing import invert_objectives, scalers
 from skcriteria.madm import similarity
 from skcriteria.pipeline import mkpipe
 import datetime
+from tkinter import filedialog
 
-def get_file_direct(filePath, file_name, error_label):
-    print(filePath)
+
+def get_file_direct(file_path, error_label):
+    folder_path = file_path[0:file_path.rfind("/")]
+    file_name = file_path[file_path.rfind("/") +1:]
+    print(folder_path)
     try:
-        os.chdir(filePath)
+        os.chdir(folder_path)
         wb = openpyxl.load_workbook(file_name)
-        return wb
+        return wb, file_name
     except Exception as error:
-        print('Please make sure that you have inputed a valid path. You can get the path by right-clicking the file and selecting "Copy Path".',"\n")
+        print('An error has occured. Please try again.',"\n")
         print(error)
-        error_label.config(text = 'Please make sure that you have inputed a valid path.\n You can get the path by right-clicking the file and selecting "Copy Path".')
+        error_label.config(text = 'An error has occured. Please try again.')
         return "error"
 
 def create_matrix(sheet, row, column):

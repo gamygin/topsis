@@ -14,5 +14,5 @@ Row 4-end: Name of the object, values of each criteria
 The .exe file is located in the dist folder.
 
 ## NOTES:
-Note1: You can use a sample file in this repository as a demo - in that case the derictory is ".", the file is "TOPSIS_sample.xlsx".
+Note1: You can use a sample file in this repository as a demo - in that case the derictory is ".", the file is "TOPSIS_sample.xlsx".  
 Note2: If you use the exl_ranking.exe file, you will have to wait about 10-15s before it starts, so do not close it. If you use exl_ranking.py it will be much quicker.

@@ -9,41 +9,38 @@ from tkinter import *
 
 from util import *
 
-
-def get_window_data():
+def select_file():
     global wb, file_name
-    print(1)
-    file_path = file_path_entry.get()
-    print(file_path)
-    folder_path = file_path[0:file_path.rfind("\\")]
-    print(folder_path)
-    file_name = file_path[file_path.rfind("\\") +1:]
-    print(file_name)
-    result = get_file_direct(folder_path, file_name, error_label)
-    print(result)
+    filetypes = [
+        ("excel files", "*.xlsx")
+    ]
+
+    filenames = filedialog.askopenfilenames(
+        title='Open files',
+        initialdir='/',
+        filetypes=filetypes)
+
+    print(filenames[0])
+    window.destroy()
+    result = get_file_direct(filenames[0], error_label)
     if result == "error":
         return 
     else:
-        wb = result
-    window.destroy()
+        wb = result[0]
+        file_name = result[1]
+        return
+    
 
 
 window = Tk()
-window.geometry("650x250")
+window.geometry("450x150")
 window.title("Ranking")
-
-label_file_path = Label(window, text="Path to the file", font= ('Arial 15'))
-
-file_path_entry = Entry(window, width=40, font=('Arial 15'))
 
 error_label = Label(window, text="", font= ('Arial 10'))
 
-submit = Button(window, text="Analyze", height=2, width=20, command= get_window_data)
+submit = Button(window, text="Select file to analyze", height=2, width=20, command= select_file)
 
 signature = Label(window, text="Made by: Nikita Gamygin", font= ('Arial 10'))
-
-label_file_path.pack()
-file_path_entry.pack()
 
 error_label.pack()
 
@@ -52,6 +49,7 @@ submit.pack(pady= 20)
 signature.pack(side=BOTTOM)
 
 window.mainloop()
+
 
 if __name__ == "__main__":
     sheet = wb.active
@@ -160,8 +158,31 @@ if __name__ == "__main__":
         wb.worksheets[0].column_dimensions[index].width = 15
         #saving file
         wb.save(file_name)
+
+        win = Tk()
+        win.geometry("450x150")
+        win.title("Success")
+
+        label = Label(win,text="Your file has been successfully analyzed and altered.", font= ('Arial 13'))
+        label.pack(pady=20)
+
+        close = Label(win, text= "Please close this window after your finish reading.", font=('Arial 10'))
+        close.pack(pady=20)
+
+        win.mainloop()
     except Exception as error:
         print("Processes stopped: Your file doesn't oblige by the structure given in README.md. Review for any possible holes or incorrect value types.")
         print(f"Error: {error}")
+        win = Tk()
+        win.geometry("450x150")
+        win.title("Success")
+
+        label = Label(win,text="Processes stopped:\nYour file doesn't oblige by the structure given in README.md.\nReview for any possible holes or incorrect value types.", font= ('Arial 13'))
+        label.pack(pady=20)
+
+        close = Label(win, text= "Please close this window after your finish reading.", font=('Arial 10'))
+        close.pack(pady=20)
+
+        win.mainloop()
 
     
