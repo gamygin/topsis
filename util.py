@@ -39,25 +39,47 @@ def create_matrix(sheet, row, column):
 
 def display_snapshot(sheet, last_row, alternatives, criteria, weights, objectives, matrix):
     #display the alternatives
+    i=0
+    print("alternatives:")
     for alternative in alternatives:
-            sheet.cell(row= last_row + 3 + alternatives.index(alternative), column= 1).value = alternative
+            sheet.cell(row= last_row + 3 + i, column= 1).value = alternative
+            print(" ",alternative)
+            i+=1
 
     #display the criteria
+    i=0
+    print("criteria:")
     for criterion in criteria:
-        sheet.cell(row= last_row, column= 2 + criteria.index(criterion)).value = criterion
+        sheet.cell(row= last_row, column= 2 + i).value = criterion
+        print(" ",criterion)
+        i+=1
 
     #display the weights
+    i=0
+    print("weights:")
     for weight in weights:
-        sheet.cell(row= last_row + 1, column= 2 + weights.index(weight)).value = weight
+        sheet.cell(row= last_row + 1, column= 2 + i).value = weight
+        print(" ",weight)
+        i+=1
 
     #display the objectives
+    i=0
+    print("objectives:")
     for objective in objectives:
-        sheet.cell(row= last_row + 2, column= 2 + objectives.index(objective)).value = objective
+        sheet.cell(row= last_row + 2, column= 2 + i).value = objective
+        print(" ",objective)
+        i+=1
 
     #display matrix
+    i=0
+    print("matrix:")
     for row in matrix:
+        v=0
         for value in row:
-            sheet.cell(row= last_row + 3 + matrix.index(row), column= 2 + row.index(value)).value = value
+            sheet.cell(row= last_row + 3 + i, column= 2 + v).value = value
+            print(" ",value)
+            v+=1
+        i+=1
 
 def display_rankings(sheet, rank_column, last_row, rankings):
     #inserting rank header with date & time

@@ -145,10 +145,12 @@ if __name__ == "__main__":
         last_row += 1
 
         #displaying data on time of analysis
+        print("Displaying snapshot")
         display_snapshot(sheet, last_row, alternatives, criteria, weights, objectives_str, matrix)
         
         #displaying rankings
         rank_column = len(criteria) + 2
+        print("Displaying rankings")
         display_rankings(sheet, rank_column, last_row, rankings)
 
         #getting column name in letters
